@@ -27,7 +27,7 @@ class EthereumIndexer(ABC):
     `process_element`
     """
     def __init__(self, ethereum_client: EthereumClient, confirmations: int = 1,
-                 block_process_limit: int = 10, updated_blocks_behind: int = 20,
+                 block_process_limit: int = 1000, updated_blocks_behind: int = 20,
                  query_chunk_size: int = 100, first_block_threshold: int = 150000,
                  block_auto_process_limit: bool = True):
         """
@@ -210,7 +210,7 @@ class EthereumIndexer(ABC):
                 logger.info('%s: block_process_limit halved to %d', self.__class__.__name__,
                             self.block_process_limit)
             if time_diff > 10:
-                new_block_process_limit = max(self.block_process_limit - 100, 10)
+                new_block_process_limit = max(self.block_process_limit - 5000, 500)
                 self.block_process_limit = new_block_process_limit
                 logger.info('%s: block_process_limit decreased to %d', self.__class__.__name__,
                             self.block_process_limit)
@@ -219,7 +219,7 @@ class EthereumIndexer(ABC):
                 logger.info('%s: block_process_limit duplicated to %d', self.__class__.__name__,
                             self.block_process_limit)
             elif time_diff < 3:
-                self.block_process_limit += 10
+                self.block_process_limit += 5000
                 logger.info('%s: block_process_limit increased to %d', self.__class__.__name__,
                             self.block_process_limit)
 
@@ -239,8 +239,6 @@ class EthereumIndexer(ABC):
         # We need to cast the `iterable` to `list`, if not chunks will not work well when models are updated
         almost_updated_monitored_addresses = list(self.get_almost_updated_addresses(current_block_number))
         almost_updated_monitored_addresses_chunks = chunks(almost_updated_monitored_addresses, self.query_chunk_size)
-        chunk_list = list(almost_updated_monitored_addresses_chunks)
-        logger.error(f'***** CHUNK_LIST {len(chunk_list)}')
         for almost_updated_addresses_chunk in almost_updated_monitored_addresses_chunks:
             almost_updated_addresses = [monitored_contract.address
                                         for monitored_contract in almost_updated_addresses_chunk]
