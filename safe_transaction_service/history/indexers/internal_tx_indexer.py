@@ -181,6 +181,7 @@ class InternalTxIndexerWithTraceBlock(InternalTxIndexer):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.updated_blocks_behind: int = 5000000 # Hack to process all the addresses together
 
     def get_almost_updated_addresses(self, current_block_number: int) -> List[MonitoredAddress]:
         """

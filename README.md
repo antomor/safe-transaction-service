@@ -107,6 +107,29 @@ Service is currently configured to support _Mainnet_, _Rinkeby_, _Goerli_, _Kova
 the `network id` instead of the `Enum`.
 - Only contracts that need to be configured are the **ProxyFactory** that will be used to deploy the contracts and
 the **GnosisSafe/GnosisSafeL2**.
+- If you're running an Ethereum network on your host (e.g. `hardhat`, `ganache`), set the Ethereum host to `host.docker.internal` in your `.env` file.
+```
+ETHEREUM_NODE_URL=http://host.docker.internal:8545
+ETHEREUM_TRACING_NODE_URL=http://host.docker.internal:8545
+```
+- If you're running `hardhat` locally, please make sure it is exposed on a reachable ip. The address `127.0.0.1` isn't reachable outside your host network, while `0.0.0.0` is reachable.
+- [Optional] If you want to access the SwaggerUI from your host machine, please change the Swagger BASE_URL. You have to change the file `config/urls.py`:
+```py
+schema_view = get_schema_view(
+    openapi.Info(
+        title='Gnosis Safe Transaction Service API',
+        default_version='v1',
+        description='API to keep track of transactions sent via Gnosis Safe smart contracts',
+        contact=openapi.Contact(email='safe@gnosis.io'),
+        license=openapi.License(name='MIT License'),
+    ),
+    validators=['flex', 'ssv'],
+    public=True,
+    permission_classes=[permissions.AllowAny],
+    # Set the SwaggerUI BASE_URL
+    url="http://localhost:8000",
+)
+```
 
 ## Use admin interface
 Services come with a basic administration web ui (provided by Django) by default on http://localhost:8000/admin/

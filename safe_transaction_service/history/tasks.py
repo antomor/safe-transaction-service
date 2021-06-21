@@ -116,6 +116,7 @@ def index_internal_txs_task(self) -> Optional[int]:
         with only_one_running_task(self):
             logger.info('Start indexing of internal txs')
             number_traces = InternalTxIndexerProvider().start()
+            # number_traces = 0
             logger.info('Find internal txs task processed %d traces', number_traces)
             if number_traces:
                 logger.info('Calling task to process decoded traces')

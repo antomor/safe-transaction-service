@@ -15,6 +15,16 @@ services:
     depends_on:
       - web
 
+  # openethereum:
+  #   image: ethnode-custom
+  #   ports:
+  #     - "0.0.0.0:8545:8545"
+  #     - "0.0.0.0:8546:8546"
+  #     - "0.0.0.0:30303:30303"
+  #     - "0.0.0.0:30303:30303/udp"
+  #   command: "openethereum -l info  --node-arguments --tracing=on"
+
+
   redis:
     image: redis:alpine
     ports:
@@ -36,6 +46,7 @@ services:
     depends_on:
       - db
       - redis
+      # - openethereum
     working_dir: /app
     ports:
       - "8888:8888"
@@ -52,6 +63,7 @@ services:
     depends_on:
       - db
       - redis
+      # - openethereum
     command: docker/web/celery/worker/run.sh
 
   scheduler:
