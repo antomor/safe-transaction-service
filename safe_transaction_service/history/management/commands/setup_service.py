@@ -135,7 +135,7 @@ MASTER_COPIES: Dict[EthereumNetwork, List[Tuple[str, int, str]]] = {
         ('0x3E5c63644E683549055b9Be8653de26E0B4CD36E', 8485899, '1.3.0+L2'),
         ('0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552', 8485903, '1.3.0'),
     ],
-    "31": [
+    EthereumNetwork.RSK_TESTNET: [
         ("0xFfD41B816f2821e579B4Da85c7352BF4F17e4fa5", 1951013,'1.2.0')
     ],
 }
@@ -189,7 +189,7 @@ PROXY_FACTORIES: Dict[EthereumNetwork, List[Tuple[str, int]]] = {
     EthereumNetwork.BINANCE: [
         ('0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2', 8485873),  # v1.3.0
     ],
-    "31": [
+    EthereumNetwork.RSK_TESTNET: [
         ('0x5b836117aEd4ca4DeE8e2E464f97f7F59B426c5a', 1951013) # v1.2.0
     ],
 }

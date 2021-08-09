@@ -133,7 +133,7 @@ class PriceService:
         elif self.ethereum_network == EthereumNetwork.BINANCE:
             return self.get_binance_usd_price()
         # RSKSMART: add support for rbtc price
-        elif self.ethereum_network in [EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET]:
+        elif self.ethereum_network in (EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET):
             return self.rsk_price_provider.get_rbtc_usd_price()
         else:
             try:
@@ -150,7 +150,7 @@ class PriceService:
         :return: Current ether value for a given `token_address`
         """
         # RSKSMART: add support for RSK coins
-        if self.ethereum_network in [EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET]:
+        if self.ethereum_network in (EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET):
             return self.rsk_price_provider.get_price(token_address)
 
         for oracle in self.enabled_price_oracles:
@@ -180,7 +180,7 @@ class PriceService:
         """
         # FIXME: We must fix to include rsk coins
         # RSKSMART: add support for RSK coins
-        if self.ethereum_network in [EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET]:
+        if self.ethereum_network in (EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET):
             return self.rsk_price_provider.get_pool_usd_token_price(token_address)
 
         for oracle in self.enabled_usd_price_pool_oracles:
