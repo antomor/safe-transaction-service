@@ -15,15 +15,15 @@ class CoingeckoClient:
     def __init__(self):
         self.http_session = requests.Session()
 
-    def _get_price(self, url: str, name: str):
+    def _get_price(self, url: str, name: str, currency: str = 'usd'):
         try:
             response = self.http_session.get(url, timeout=10)
             if not response.ok:
                 raise CannotGetPrice
             # Result is returned with lowercased `token_address`
             price = response.json().get(name)
-            if price and price.get('usd'):
-                return price['usd']
+            if price and price.get(currency):
+                return price[currency]
             else:
                 raise CannotGetPrice(f'Price from url={url} is {price}')
         except (ValueError, IOError) as e:
@@ -35,10 +35,18 @@ class CoingeckoClient:
         :param name: coin name
         :return: usd price for token name, 0. if not found
         """
+        return self._get_price_vs_currencies(name, 'usd')
+
+    def _get_price_vs_currencies(self, name: str, currency: str) -> float:
+        """
+        :param name: coin name
+        :param currency: currency name
+        :return: price for token name, 0. if not found
+        """
         name = name.lower()
         url = urljoin(self.base_url,
-                      f'/api/v3/simple/price?ids={name}&vs_currencies=usd')
-        return self._get_price(url, name)
+                      f'/api/v3/simple/price?ids={name}&vs_currencies={currency}')
+        return self._get_price(url, name, currency)
 
     def get_token_price(self, token_address: ChecksumAddress) -> float:
         """
@@ -58,3 +66,13 @@ class CoingeckoClient:
 
     def get_ewt_usd_price(self) -> float:
         return self.get_price('energy-web-token')
+    
+    # RSKSMART: add support for RBTC price
+    def get_rbtc_usd_price(self) -> float:
+        return self.get_price('rootstock')
+    
+    def get_rif_usd_price(self) -> float:
+        return self.get_price('rif-token')
+
+    def get_rif_btc_price(self) -> float:
+        return self._get_price_vs_currencies('rif-token', 'btc')

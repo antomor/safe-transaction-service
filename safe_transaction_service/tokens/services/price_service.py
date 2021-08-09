@@ -1,6 +1,8 @@
 import operator
 from enum import Enum
 from functools import cached_property
+from safe_transaction_service.utils.rsk import RSKNetwork
+from safe_transaction_service.tokens.services.rsk_price_provider import RSKPriceProvider
 from typing import Tuple
 
 from cache_memoize import cache_memoize
@@ -63,6 +65,7 @@ class PriceService:
         self.cache_token_eth_value = TTLCache(maxsize=2048, ttl=60 * 30)  # 30 minutes of caching
         self.cache_token_usd_value = TTLCache(maxsize=2048, ttl=60 * 30)  # 30 minutes of caching
         self.cache_token_info = {}
+        self.rsk_price_provider = RSKPriceProvider(int(self.ethereum_client.w3.net.version))
 
     @cached_property
     def enabled_price_oracles(self) -> Tuple[PriceOracle]:
@@ -130,11 +133,17 @@ class PriceService:
             return self.get_matic_usd_price()
         elif self.ethereum_network == EthereumNetwork.BINANCE:
             return self.get_binance_usd_price()
+        # RSKSMART: add support for rbtc price
+        elif self._is_rsk():
+            return self.rsk_price_provider.get_rbtc_usd_price()
         else:
             try:
                 return self.kraken_client.get_eth_usd_price()
             except CannotGetPrice:
                 return self.binance_client.get_eth_usd_price()
+
+    def _is_rsk(self):
+        return int(self.ethereum_client.w3.net.version) in (RSKNetwork.TESTNET.value, RSKNetwork.MAINET.value)
 
     @cachedmethod(cache=operator.attrgetter('cache_token_eth_value'))
     @cache_memoize(60 * 30, prefix='balances-get_token_eth_value')  # 30 minutes
@@ -144,6 +153,10 @@ class PriceService:
         :param token_address:
         :return: Current ether value for a given `token_address`
         """
+        # RSKSMART: add support for RSK coins
+        if self._is_rsk():
+            return self.rsk_price_provider.get_price(token_address)
+
         for oracle in self.enabled_price_oracles:
             try:
                 return oracle.get_price(token_address)
@@ -169,6 +182,11 @@ class PriceService:
         :param token_address:
         :return: usd value for a given `token_address` using Curve, if not use Coingecko as last resource
         """
+        # FIXME: We must fix to include rsk coins
+        # RSKSMART: add support for RSK coins
+        if self._is_rsk():
+            return self.rsk_price_provider.get_pool_usd_token_price(token_address)
+
         for oracle in self.enabled_usd_price_pool_oracles:
             try:
                 return oracle.get_pool_usd_token_price(token_address)
