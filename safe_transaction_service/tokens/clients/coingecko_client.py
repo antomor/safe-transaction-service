@@ -15,15 +15,15 @@ class CoingeckoClient:
     def __init__(self):
         self.http_session = requests.Session()
 
-    def _get_price(self, url: str, name: str):
+    def _get_price(self, url: str, name: str, currency: str = 'usd'):
         try:
             response = self.http_session.get(url, timeout=10)
             if not response.ok:
                 raise CannotGetPrice
             # Result is returned with lowercased `token_address`
             price = response.json().get(name)
-            if price and price.get('usd'):
-                return price['usd']
+            if price and price.get(currency):
+                return price[currency]
             else:
                 raise CannotGetPrice(f'Price from url={url} is {price}')
         except (ValueError, IOError) as e:
@@ -46,7 +46,7 @@ class CoingeckoClient:
         name = name.lower()
         url = urljoin(self.base_url,
                       f'/api/v3/simple/price?ids={name}&vs_currencies={currency}')
-        return self._get_price(url, name)
+        return self._get_price(url, name, currency)
 
     def get_token_price(self, token_address: ChecksumAddress) -> float:
         """
@@ -75,4 +75,4 @@ class CoingeckoClient:
         return self.get_price('rif-token')
 
     def get_rif_btc_price(self) -> float:
-        return self.get_price_vs_currencies('rif-token', 'rbtc')
+        return self._get_price_vs_currencies('rif-token', 'btc')

@@ -17,8 +17,9 @@ class RSKPriceProvider(PriceOracle, UsdPricePoolOracle):
         return self.coingecko_client.get_rbtc_usd_price()
     
     def _is_rif_or_trif(self, token_address):
-        return (self.ethereum_network == RSKNetwork.TESTNET.value and token_address == self.TRIF_ADDRESS) \
-            or (self.ethereum_network == RSKNetwork.MAINET.value and token_address == self.RIF_ADDRESS)
+        token_address_lower = token_address.lower()
+        return (self.ethereum_network == RSKNetwork.TESTNET.value and token_address_lower == self.TRIF_ADDRESS) \
+            or (self.ethereum_network == RSKNetwork.MAINET.value and token_address_lower == self.RIF_ADDRESS)
 
     def get_price(self, token_address):
         if self._is_rif_or_trif(token_address):
