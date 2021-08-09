@@ -1,6 +1,7 @@
 import operator
 from enum import Enum
 from functools import cached_property
+from safe_transaction_service.tokens.services.rsk_price_provider import RSKPriceProvider
 from typing import Tuple
 
 from cache_memoize import cache_memoize
@@ -63,6 +64,7 @@ class PriceService:
         self.cache_token_eth_value = TTLCache(maxsize=2048, ttl=60 * 30)  # 30 minutes of caching
         self.cache_token_usd_value = TTLCache(maxsize=2048, ttl=60 * 30)  # 30 minutes of caching
         self.cache_token_info = {}
+        self.rsk_price_provider = RSKPriceProvider(self.ethereum_network)
 
     @cached_property
     def enabled_price_oracles(self) -> Tuple[PriceOracle]:
@@ -130,6 +132,9 @@ class PriceService:
             return self.get_matic_usd_price()
         elif self.ethereum_network == EthereumNetwork.BINANCE:
             return self.get_binance_usd_price()
+        # RSKSMART: add support for rbtc price
+        elif self.ethereum_network in [EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET]:
+            return self.rsk_price_provider.get_rbtc_usd_price()
         else:
             try:
                 return self.kraken_client.get_eth_usd_price()
@@ -144,6 +149,10 @@ class PriceService:
         :param token_address:
         :return: Current ether value for a given `token_address`
         """
+        # RSKSMART: add support for RSK coins
+        if self.ethereum_network in [EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET]:
+            return self.rsk_price_provider.get_price(token_address)
+
         for oracle in self.enabled_price_oracles:
             try:
                 return oracle.get_price(token_address)
@@ -169,6 +178,11 @@ class PriceService:
         :param token_address:
         :return: usd value for a given `token_address` using Curve, if not use Coingecko as last resource
         """
+        # FIXME: We must fix to include rsk coins
+        # RSKSMART: add support for RSK coins
+        if self.ethereum_network in [EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET]:
+            return self.rsk_price_provider.get_pool_usd_token_price(token_address)
+
         for oracle in self.enabled_usd_price_pool_oracles:
             try:
                 return oracle.get_pool_usd_token_price(token_address)
