@@ -197,6 +197,7 @@ class BalanceService:
         balances: List[Balance] = self.get_balances(safe_address, only_trusted, exclude_spam)
         try:
             eth_price = self.price_service.get_eth_usd_price()
+            logger.debug(f'===== eth_price {eth_price}')
         except CannotGetPrice:
             logger.warning('Cannot get network ether price', exc_info=True)
             eth_price = 0
@@ -204,6 +205,7 @@ class BalanceService:
         token_addresses = [balance.token_address for balance in balances]
         token_eth_values_with_timestamp = self.get_cached_token_eth_values(token_addresses)
         for balance, token_eth_value_with_timestamp in zip(balances, token_eth_values_with_timestamp):
+            logger.debug(f'===== balance, token_eth_value_with_timestamp: {balance}, {token_eth_value_with_timestamp}')
             token_eth_value = token_eth_value_with_timestamp.eth_value
             token_address = balance.token_address
             if not token_address:  # Ether
@@ -213,6 +215,7 @@ class BalanceService:
                 fiat_conversion = eth_price * token_eth_value
                 balance_with_decimals = balance.balance / 10**balance.token.decimals
                 fiat_balance = fiat_conversion * balance_with_decimals
+                logger.debug(f'===== fiat_balance, fiat_conversion: {fiat_balance}, {fiat_conversion}')
 
             balances_with_usd.append(
                 BalanceWithFiat(
