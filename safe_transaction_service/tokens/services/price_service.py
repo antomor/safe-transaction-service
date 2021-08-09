@@ -133,7 +133,8 @@ class PriceService:
         elif self.ethereum_network == EthereumNetwork.BINANCE:
             return self.get_binance_usd_price()
         # RSKSMART: add support for rbtc price
-        elif self.ethereum_network in (EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET):
+        #elif self.ethereum_network in (EthereumNetwork.RSK_TESTNET, EthereumNetwork.RSK_MAINNET):
+        elif self.ethereum_network == EthereumNetwork.RSK_TESTNET or self.ethereum_network == EthereumNetwork.RSK_MAINNET:
             return self.rsk_price_provider.get_rbtc_usd_price()
         else:
             try:
