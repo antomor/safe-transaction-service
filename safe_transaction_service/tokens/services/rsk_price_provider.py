@@ -30,4 +30,5 @@ class RSKPriceProvider(PriceOracle, UsdPricePoolOracle):
     def get_pool_usd_token_price(self, pool_token_address: ChecksumAddress) -> float:
         if self._is_rif_or_trif(pool_token_address):
             return self.coingecko_client.get_rif_usd_price()
+        # FIXME: Add suport for other tokens
         return 0.
