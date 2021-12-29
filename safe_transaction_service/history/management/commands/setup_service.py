@@ -140,6 +140,14 @@ MASTER_COPIES: Dict[EthereumNetwork, List[Tuple[str, int, str]]] = {
         # FIXME: BLOCK TO BE CHANGED
         ("0xFfD41B816f2821e579B4Da85c7352BF4F17e4fa5", 2073143,'1.2.0')
     ],
+    RSKNetwork.REGTEST: [
+        # FIXME: BLOCK TO BE CHANGED
+        ("0xd6681FD2d471c044BDdDc9DF00D1Af195Bd58bfa", 64,'1.2.0')
+    ],
+    '33': [
+        # FIXME: BLOCK TO BE CHANGED
+        ("0xd6681FD2d471c044BDdDc9DF00D1Af195Bd58bfa", 64,'1.2.0')
+    ],
 }
 
 PROXY_FACTORIES: Dict[EthereumNetwork, List[Tuple[str, int]]] = {
@@ -194,6 +202,14 @@ PROXY_FACTORIES: Dict[EthereumNetwork, List[Tuple[str, int]]] = {
     RSKNetwork.TESTNET: [
         # FIXME: BLOCK TO BE CHANGED
         ('0x5b836117aEd4ca4DeE8e2E464f97f7F59B426c5a', 2073143) # v1.2.0
+    ],
+    RSKNetwork.REGTEST: [
+        # FIXME: BLOCK TO BE CHANGED
+        ('0x13cF0a53b6102b518e8b547d5E50b38C1b089E08', 66) # v1.2.0
+    ],
+    '33': [
+        # FIXME: BLOCK TO BE CHANGED
+        ('0x13cF0a53b6102b518e8b547d5E50b38C1b089E08', 66) # v1.2.0
     ],
 }
 
